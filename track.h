@@ -15,59 +15,62 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-class Vrhomboid			// Rhomboid with two vertical sides.
-  {
+class Vrhomboid // Rhomboid with two vertical sides.
+{
   int left_, lvcenter_, right_, rvcenter_, height_;
 
 public:
-  Vrhomboid( const int l, const int lc, const int r, const int rc, const int h );
+  Vrhomboid(const int l, const int lc, const int r, const int rc, const int h);
 
-  int left()     const { return left_;     }
+  int left() const { return left_; }
   int lvcenter() const { return lvcenter_; }
-  int right()    const { return right_;    }
+  int right() const { return right_; }
   int rvcenter() const { return rvcenter_; }
-  int height()   const { return height_;   }
-  int width()    const { return right_ - left_ + 1; }
-  int size()     const { return height_ * width(); }
+  int height() const { return height_; }
+  int width() const { return right_ - left_ + 1; }
+  int size() const { return height_ * width(); }
 
-  void left( const int l );
-  void lvcenter( const int lc ) { lvcenter_ = lc; }
-  void right( const int r );
-  void rvcenter( const int rc ) { rvcenter_ = rc; }
-  void height( const int h );
-  void extend_left( const int l );
-  void extend_right( const int r );
+  void left(const int l);
+  void lvcenter(const int lc) { lvcenter_ = lc; }
+  void right(const int r);
+  void rvcenter(const int rc) { rvcenter_ = rc; }
+  void height(const int h);
+  void extend_left(const int l);
+  void extend_right(const int r);
 
-  int bottom( const int col ) const { return vcenter( col ) + ( height_ / 2 ); }
-  int top( const int col ) const { return bottom( col ) - height_ + 1; }
-  int vcenter( const int col ) const;
+  int bottom(const int col) const { return vcenter(col) + (height_ / 2); }
+  int top(const int col) const { return bottom(col) - height_ + 1; }
+  int vcenter(const int col) const;
 
-  bool includes( const Rectangle & r ) const;
-  bool includes( const int row, const int col ) const;
-  };
+  bool includes(const Rectangle &r) const;
+  bool includes(const int row, const int col) const;
+};
 
-
-class Track		// vector of Vrhomboids tracking a Textline.
-  {
-  std::vector< Vrhomboid > data;
+class Track // vector of Vrhomboids tracking a Textline.
+{
+  std::vector<Vrhomboid> data;
 
 public:
   Track() {}
-  Track( const Track & t ) : data( t.data ) {}
-  Track & operator=( const Track & t )
-    { if( this != &t ) { data = t.data; } return *this; }
+  Track(const Track &t) : data(t.data) {}
+  Track &operator=(const Track &t) {
+    if (this != &t) {
+      data = t.data;
+    }
+    return *this;
+  }
 
-  void set_track( const std::vector< Rectangle > & rectangle_vector );
+  void set_track(const std::vector<Rectangle> &rectangle_vector);
 
   int segments() const { return data.size(); }
   int height() const { return data.empty() ? 0 : data[0].height(); }
-  int left() const   { return data.empty() ? 0 : data[0].left(); }
-  int right() const  { return data.empty() ? 0 : data.back().right(); }
+  int left() const { return data.empty() ? 0 : data[0].left(); }
+  int right() const { return data.empty() ? 0 : data.back().right(); }
 
-  int bottom( const int col ) const;
-  int top( const int col ) const;
-  int vcenter( const int col ) const;
+  int bottom(const int col) const;
+  int top(const int col) const;
+  int vcenter(const int col) const;
 
-//  bool includes( const Rectangle & r ) const;
-//  bool includes( const int row, const int col ) const;
-  };
+  //  bool includes( const Rectangle & r ) const;
+  //  bool includes( const int row, const int col ) const;
+};

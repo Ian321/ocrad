@@ -15,76 +15,75 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-class Character : public Rectangle
-  {
+class Character : public Rectangle {
 public:
-  struct Guess
-    {
+  struct Guess {
     int code;
     int value;
-    Guess( const int c, const int v ) : code( c ), value( v ) {}
-    };
+    Guess(const int c, const int v) : code(c), value(v) {}
+  };
 
 private:
-  std::vector< Blob * > blobpv;		// the blobs forming this Character
-  std::vector< Guess > gv;		// vector of possible char codes
-					// and their associated values.
-					// gv[0].code < 0 means further
-					// processing is needed (merged chars)
+  std::vector<Blob *> blobpv; // the blobs forming this Character
+  std::vector<Guess> gv;      // vector of possible char codes
+                              // and their associated values.
+                              // gv[0].code < 0 means further
+                              // processing is needed (merged chars)
 
-  void recognize110( const Charset & charset, const Rectangle & charbox );
-  void recognize111( const Charset & charset, const Rectangle & charbox );
-  void recognize112( const Rectangle & charbox );
-  void recognize12( const Charset & charset, const Rectangle & charbox );
-  void recognize13( const Charset & charset, const Rectangle & charbox );
+  void recognize110(const Charset &charset, const Rectangle &charbox);
+  void recognize111(const Charset &charset, const Rectangle &charbox);
+  void recognize112(const Rectangle &charbox);
+  void recognize12(const Charset &charset, const Rectangle &charbox);
+  void recognize13(const Charset &charset, const Rectangle &charbox);
 
 public:
-  explicit Character( Blob * const p )
-    : Rectangle( *p ), blobpv( 1, p ) {}
+  explicit Character(Blob *const p) : Rectangle(*p), blobpv(1, p) {}
 
-  Character( const Rectangle & re, int code, int value )
-    : Rectangle( re ), gv( 1, Guess( code, value ) ) {}
+  Character(const Rectangle &re, int code, int value)
+      : Rectangle(re), gv(1, Guess(code, value)) {}
 
-  Character( const Character & c );
-  Character & operator=( const Character & c );
+  Character(const Character &c);
+  Character &operator=(const Character &c);
 
   ~Character();
 
   int area() const;
-  const Blob & blob( const int i ) const;
-  Blob & blob( const int i );
+  const Blob &blob(const int i) const;
+  Blob &blob(const int i);
   int blobs() const { return blobpv.size(); }
-  Blob & main_blob();
+  Blob &main_blob();
 
-  void shift_blobp( Blob * const p );
+  void shift_blobp(Blob *const p);
 
-  void add_guess( const int code, const int value )
-    { gv.push_back( Guess( code, value ) ); }
+  void add_guess(const int code, const int value) {
+    gv.push_back(Guess(code, value));
+  }
   void clear_guesses() { gv.clear(); }
-  void insert_guess( const int i, const int code, const int value );
-  void delete_guess( const int i );
-  void only_guess( const int code, const int value )
-    { gv.clear(); gv.push_back( Guess( code, value ) ); }
-  bool set_merged_guess( const int code1, const int right1,
-                         const int code2, const int blob_index );
-  void swap_guesses( const int i, const int j );
-  const Guess & guess( const int i ) const;
+  void insert_guess(const int i, const int code, const int value);
+  void delete_guess(const int i);
+  void only_guess(const int code, const int value) {
+    gv.clear();
+    gv.push_back(Guess(code, value));
+  }
+  bool set_merged_guess(const int code1, const int right1, const int code2,
+                        const int blob_index);
+  void swap_guesses(const int i, const int j);
+  const Guess &guess(const int i) const;
   int guesses() const { return gv.size(); }
-  bool maybe( const int code ) const;
-  bool isalnum() const
-    { return ( gv.size() > 0 && UCS::isalnum( gv[0].code ) ); }
-//  bool maybe_digit() const;
-//  bool maybe_letter() const;
+  bool maybe(const int code) const;
+  bool isalnum() const { return (gv.size() > 0 && UCS::isalnum(gv[0].code)); }
+  //  bool maybe_digit() const;
+  //  bool maybe_letter() const;
 
-  void join( Character & c );
+  void join(Character &c);
   unsigned char byte_result() const;
-  const char * utf8_result() const;
-  void print( const Control & control ) const;
-  void dprint( const Control & control, const Rectangle & charbox,
-               const bool graph, const bool recursive ) const;
-  void xprint( const Control & control ) const;
+  const char *utf8_result() const;
+  void print(const Control &control) const;
+  void dprint(const Control &control, const Rectangle &charbox,
+              const bool graph, const bool recursive) const;
+  void xprint(const Control &control) const;
 
-  void recognize1( const Charset & charset, const Rectangle & charbox );
-  void apply_filter( const Filter::Type filter );
-  void apply_user_filter( const User_filter & user_filter );
-  };
+  void recognize1(const Charset &charset, const Rectangle &charbox);
+  void apply_filter(const Filter::Type filter);
+  void apply_user_filter(const User_filter &user_filter);
+};

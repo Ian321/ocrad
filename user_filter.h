@@ -15,35 +15,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-class User_filter
-  {
+class User_filter {
 public:
-       // default action: discard, leave unmodified, mark as unrecognized
+  // default action: discard, leave unmodified, mark as unrecognized
   enum Default { d_discard = 0, d_leave, d_mark };
 
 private:
-  struct Entry
-    {
+  struct Entry {
     int code;
     int new_code;
-    Entry( const int c, const int nc ) : code( c ), new_code( nc ) {}
-    };
+    Entry(const int c, const int nc) : code(c), new_code(nc) {}
+  };
 
-  std::vector< int > table1;	// -1 or new_code of first 256 UCS chars
-  std::vector< Entry > table2;		// codes of UCS chars >= 256
+  std::vector<int> table1;   // -1 or new_code of first 256 UCS chars
+  std::vector<Entry> table2; // codes of UCS chars >= 256
   std::string error_;
   int retval_;
   Default default_;
 
-  bool enable_char( const int code, int new_code );
-  int parse_char( const std::string & line, unsigned &i ) const;
-  void set_file_error( const char * const file_name, const int linenum );
+  bool enable_char(const int code, int new_code);
+  int parse_char(const std::string &line, unsigned &i) const;
+  void set_file_error(const char *const file_name, const int linenum);
 
 public:
-  explicit User_filter( const char * const file_name );
-  const std::string & error() const { return error_; }
+  explicit User_filter(const char *const file_name);
+  const std::string &error() const { return error_; }
   int retval() const { return retval_; }
-  int get_new_code( const int code ) const;	// -1 means disabled
+  int get_new_code(const int code) const; // -1 means disabled
   bool discard() const { return default_ == d_discard; }
   bool mark() const { return default_ == d_mark; }
-  };
+};

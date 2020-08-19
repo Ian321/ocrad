@@ -27,9 +27,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <stdint.h>
 #include <string>
 #include <vector>
-#include <stdint.h>
 #ifdef _WIN32
 #include <io.h>
 #else
@@ -42,237 +42,252 @@
 
 #include "arg_parser.h"
 #include "common.h"
+#include "page_image.h"
 #include "rational.h"
 #include "rectangle.h"
-#include "user_filter.h"
-#include "page_image.h"
 #include "textpage.h"
-
+#include "user_filter.h"
 
 namespace {
 
-const char * const program_name = "ocrad";
-const char * const program_year = "2019";
-const char * invocation_name = 0;
+  const char *const program_name = "ocrad";
+  const char *const program_year = "2019";
+  const char *invocation_name = 0;
 
-struct Input_control
-  {
-  Transformation transformation;
-  int scale;
-  Rational threshold, ltwh[4];
-  bool copy, cut, invert, layout;
+  struct Input_control {
+    Transformation transformation;
+    int scale;
+    Rational threshold, ltwh[4];
+    bool copy, cut, invert, layout;
 
-  Input_control()
-    : scale( 0 ), threshold( -1 ),
-      copy( false ), cut( false ), invert( false ), layout( false ) {}
+    Input_control()
+        : scale(0), threshold(-1), copy(false), cut(false), invert(false),
+          layout(false) {}
 
-  bool parse_cut_rectangle( const char * const s );
-  bool parse_threshold( const char * const s );
+    bool parse_cut_rectangle(const char *const s);
+    bool parse_threshold(const char *const s);
   };
 
-
-void show_error( const char * const msg, const int errcode = 0,
-                 const bool help = false )
-  {
-  if( verbosity < 0 ) return;
-  if( msg && msg[0] )
-    std::fprintf( stderr, "%s: %s%s%s\n", program_name, msg,
-                  ( errcode > 0 ) ? ": " : "",
-                  ( errcode > 0 ) ? std::strerror( errcode ) : "" );
-  if( help )
-    std::fprintf( stderr, "Try '%s --help' for more information.\n",
-                  invocation_name );
+  void show_error(const char *const msg, const int errcode = 0,
+                  const bool help = false) {
+    if (verbosity < 0)
+      return;
+    if (msg && msg[0])
+      std::fprintf(stderr, "%s: %s%s%s\n", program_name, msg,
+                   (errcode > 0) ? ": " : "",
+                   (errcode > 0) ? std::strerror(errcode) : "");
+    if (help)
+      std::fprintf(stderr, "Try '%s --help' for more information.\n",
+                   invocation_name);
   }
 
-
-bool Input_control::parse_cut_rectangle( const char * const s )
-  {
-  int c = ltwh[0].parse( s );				// left
-  if( c && s[c] == ',' && ltwh[0] >= -1 )
-    {
-    int i = c + 1;
-    c = ltwh[1].parse( &s[i] );				// top
-    if( c && s[i+c] == ',' && ltwh[1] >= -1 )
-      {
-      i += c + 1; c = ltwh[2].parse( &s[i] );		// width
-      if( c && s[i+c] == ',' && ltwh[2] > 0 )
-        {
-        i += c + 1; c = ltwh[3].parse( &s[i] );		// height
-        if( c && ltwh[3] > 0 ) { cut = true; return true; }
+  bool Input_control::parse_cut_rectangle(const char *const s) {
+    int c = ltwh[0].parse(s); // left
+    if (c && s[c] == ',' && ltwh[0] >= -1) {
+      int i = c + 1;
+      c = ltwh[1].parse(&s[i]); // top
+      if (c && s[i + c] == ',' && ltwh[1] >= -1) {
+        i += c + 1;
+        c = ltwh[2].parse(&s[i]); // width
+        if (c && s[i + c] == ',' && ltwh[2] > 0) {
+          i += c + 1;
+          c = ltwh[3].parse(&s[i]); // height
+          if (c && ltwh[3] > 0) {
+            cut = true;
+            return true;
+          }
         }
       }
     }
-  show_error( "invalid cut rectangle.", 0, true );
-  return false;
+    show_error("invalid cut rectangle.", 0, true);
+    return false;
   }
 
-
-bool Input_control::parse_threshold( const char * const s )
-  {
-  Rational tmp;
-  if( tmp.parse( s ) && tmp >= 0 && tmp <= 1 )
-    { threshold = tmp; return true; }
-  show_error( "threshold out of limits (0.0 - 1.0).", 0, true );
-  return false;
-  }
-
-
-void show_help()
-  {
-  std::printf( "GNU Ocrad is an OCR (Optical Character Recognition) program based on a\n"
-               "feature extraction method. It reads images in pbm (bitmap), pgm\n"
-               "(greyscale) or ppm (color) formats and produces text in byte (8-bit) or\n"
-               "UTF-8 formats. The pbm, pgm and ppm formats are collectively known as pnm.\n"
-               "\nOcrad includes a layout analyser able to separate the columns or blocks\n"
-               "of text normally found on printed pages.\n"
-               "\nFor best results the characters should be at least 20 pixels high. If\n"
-               "they are smaller, try the --scale option. Scanning the image at 300 dpi\n"
-               "usually produces a character size good enough for ocrad.\n"
-               "Merged, very bold or very light (broken) characters are normally not\n"
-               "recognized correctly. Try to avoid them.\n"
-               "\nUsage: %s [options] [files]\n", invocation_name );
-  std::printf( "\nOptions:\n"
-               "  -h, --help                display this help and exit\n"
-               "  -V, --version             output version information and exit\n"
-               "  -a, --append              append text to output file\n"
-               "  -c, --charset=<name>      try '--charset=help' for a list of names\n"
-               "  -e, --filter=<name>       try '--filter=help' for a list of names\n"
-               "  -E, --user-filter=<file>  user-defined filter, see manual for format\n"
-               "  -f, --force               force overwrite of output file\n"
-               "  -F, --format=<fmt>        output format (byte, utf8)\n"
-               "  -i, --invert              invert image levels (white on black)\n"
-               "  -l, --layout              perform layout analysis\n"
-               "  -o, --output=<file>       place the output into <file>\n"
-               "  -q, --quiet               suppress all messages\n"
-               "  -s, --scale=[-]<n>        scale input image by [1/]<n>\n"
-               "  -t, --transform=<name>    try '--transform=help' for a list of names\n"
-               "  -T, --threshold=<n%%>      threshold for binarization (0-100%%)\n"
-               "  -u, --cut=<l,t,w,h>       cut input image by given rectangle\n"
-               "  -v, --verbose             be verbose\n"
-               "  -x, --export=<file>       export results in ORF format to <file>\n" );
-  if( verbosity >= 1 )
-    {
-    std::printf( "  -1..6                     pnm output file type (debug)\n"
-                 "  -C, --copy                'copy' input to output (debug)\n"
-                 "  -D, --debug=<level>       (0-100) output intermediate data (debug)\n" );
+  bool Input_control::parse_threshold(const char *const s) {
+    Rational tmp;
+    if (tmp.parse(s) && tmp >= 0 && tmp <= 1) {
+      threshold = tmp;
+      return true;
     }
-  std::printf( "\nIf no files are specified, ocrad reads the image from standard input.\n"
-               "If the -o option is not specified, ocrad sends text to standard output.\n"
-               "\nExit status: 0 for a normal exit, 1 for environmental problems (file\n"
-               "not found, invalid flags, I/O errors, etc), 2 to indicate a corrupt or\n"
-               "invalid input file, 3 for an internal consistency error (eg, bug) which\n"
-               "caused ocrad to panic.\n"
-               "\nReport bugs to bug-ocrad@gnu.org\n"
-               "Ocrad home page: http://www.gnu.org/software/ocrad/ocrad.html\n"
-               "General help using GNU software: http://www.gnu.org/gethelp\n" );
+    show_error("threshold out of limits (0.0 - 1.0).", 0, true);
+    return false;
   }
 
-
-void show_version()
-  {
-  std::printf( "GNU %s %s\n", program_name, PROGVERSION );
-  std::printf( "Copyright (C) %s Antonio Diaz Diaz.\n", program_year );
-  std::printf( "License GPLv2+: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>\n"
-               "This is free software: you are free to change and redistribute it.\n"
-               "There is NO WARRANTY, to the extent permitted by law.\n" );
+  void show_help() {
+    std::printf(
+        "GNU Ocrad is an OCR (Optical Character Recognition) program based on "
+        "a\n"
+        "feature extraction method. It reads images in pbm (bitmap), pgm\n"
+        "(greyscale) or ppm (color) formats and produces text in byte (8-bit) "
+        "or\n"
+        "UTF-8 formats. The pbm, pgm and ppm formats are collectively known as "
+        "pnm.\n"
+        "\nOcrad includes a layout analyser able to separate the columns or "
+        "blocks\n"
+        "of text normally found on printed pages.\n"
+        "\nFor best results the characters should be at least 20 pixels high. "
+        "If\n"
+        "they are smaller, try the --scale option. Scanning the image at 300 "
+        "dpi\n"
+        "usually produces a character size good enough for ocrad.\n"
+        "Merged, very bold or very light (broken) characters are normally not\n"
+        "recognized correctly. Try to avoid them.\n"
+        "\nUsage: %s [options] [files]\n",
+        invocation_name);
+    std::printf(
+        "\nOptions:\n"
+        "  -h, --help                display this help and exit\n"
+        "  -V, --version             output version information and exit\n"
+        "  -a, --append              append text to output file\n"
+        "  -c, --charset=<name>      try '--charset=help' for a list of names\n"
+        "  -e, --filter=<name>       try '--filter=help' for a list of names\n"
+        "  -E, --user-filter=<file>  user-defined filter, see manual for "
+        "format\n"
+        "  -f, --force               force overwrite of output file\n"
+        "  -F, --format=<fmt>        output format (byte, utf8)\n"
+        "  -i, --invert              invert image levels (white on black)\n"
+        "  -l, --layout              perform layout analysis\n"
+        "  -o, --output=<file>       place the output into <file>\n"
+        "  -q, --quiet               suppress all messages\n"
+        "  -s, --scale=[-]<n>        scale input image by [1/]<n>\n"
+        "  -t, --transform=<name>    try '--transform=help' for a list of "
+        "names\n"
+        "  -T, --threshold=<n%%>      threshold for binarization (0-100%%)\n"
+        "  -u, --cut=<l,t,w,h>       cut input image by given rectangle\n"
+        "  -v, --verbose             be verbose\n"
+        "  -x, --export=<file>       export results in ORF format to <file>\n");
+    if (verbosity >= 1) {
+      std::printf("  -1..6                     pnm output file type (debug)\n"
+                  "  -C, --copy                'copy' input to output (debug)\n"
+                  "  -D, --debug=<level>       (0-100) output intermediate "
+                  "data (debug)\n");
+    }
+    std::printf(
+        "\nIf no files are specified, ocrad reads the image from standard "
+        "input.\n"
+        "If the -o option is not specified, ocrad sends text to standard "
+        "output.\n"
+        "\nExit status: 0 for a normal exit, 1 for environmental problems "
+        "(file\n"
+        "not found, invalid flags, I/O errors, etc), 2 to indicate a corrupt "
+        "or\n"
+        "invalid input file, 3 for an internal consistency error (eg, bug) "
+        "which\n"
+        "caused ocrad to panic.\n"
+        "\nReport bugs to bug-ocrad@gnu.org\n"
+        "Ocrad home page: http://www.gnu.org/software/ocrad/ocrad.html\n"
+        "General help using GNU software: http://www.gnu.org/gethelp\n");
   }
 
-
-const char * my_basename( const char * filename )
-  {
-  const char * c = filename;
-  while( *c ) { if( *c == '/' ) { filename = c + 1; } ++c; }
-  return filename;
+  void show_version() {
+    std::printf("GNU %s %s\n", program_name, PROGVERSION);
+    std::printf("Copyright (C) %s Antonio Diaz Diaz.\n", program_year);
+    std::printf(
+        "License GPLv2+: GNU GPL version 2 or later "
+        "<http://gnu.org/licenses/gpl.html>\n"
+        "This is free software: you are free to change and redistribute it.\n"
+        "There is NO WARRANTY, to the extent permitted by law.\n");
   }
 
+  const char *my_basename(const char *filename) {
+    const char *c = filename;
+    while (*c) {
+      if (*c == '/') {
+        filename = c + 1;
+      }
+      ++c;
+    }
+    return filename;
+  }
 
-int process_file( FILE * const infile, const char * const infile_name,
-                  const Input_control & input_control,
-                  const Control & control )
-  {
-  try
-    {
-    Page_image page_image( infile, input_control.invert );
+  int process_file(FILE *const infile, const char *const infile_name,
+                   const Input_control &input_control, const Control &control) {
+    try {
+      Page_image page_image(infile, input_control.invert);
 
-    if( input_control.cut )
-      {
-      if( page_image.cut( input_control.ltwh ) )
-        {
-        if( verbosity >= 1 )
-          std::fprintf( stderr, "file cut to %dw x %dh\n",
-                        page_image.width(), page_image.height() );
+      if (input_control.cut) {
+        if (page_image.cut(input_control.ltwh)) {
+          if (verbosity >= 1)
+            std::fprintf(stderr, "file cut to %dw x %dh\n", page_image.width(),
+                         page_image.height());
+        } else {
+          if (verbosity >= 1)
+            std::fprintf(stderr, "file '%s' totally cut away.\n", infile_name);
+          return 1;
         }
-      else
-        {
-        if( verbosity >= 1 )
-          std::fprintf( stderr, "file '%s' totally cut away.\n", infile_name );
-        return 1;
-        }
       }
 
-    page_image.transform( input_control.transformation );
-    page_image.change_scale( input_control.scale );
-    page_image.threshold( input_control.threshold );
-    if( verbosity >= 1 )
-      {
-      const Rational th( page_image.threshold(), page_image.maxval() );
-      std::fprintf( stderr, "maxval = %d, threshold = %d (%s)\n",
-                    page_image.maxval(), page_image.threshold(),
-                    th.to_decimal( 1, -3 ).c_str() );
+      page_image.transform(input_control.transformation);
+      page_image.change_scale(input_control.scale);
+      page_image.threshold(input_control.threshold);
+      if (verbosity >= 1) {
+        const Rational th(page_image.threshold(), page_image.maxval());
+        std::fprintf(stderr, "maxval = %d, threshold = %d (%s)\n",
+                     page_image.maxval(), page_image.threshold(),
+                     th.to_decimal(1, -3).c_str());
       }
 
-    if( input_control.copy )
-      {
-      if( control.outfile ) page_image.save( control.outfile, control.filetype );
-      return 0;
+      if (input_control.copy) {
+        if (control.outfile)
+          page_image.save(control.outfile, control.filetype);
+        return 0;
       }
 
-    Textpage textpage( page_image, my_basename( infile_name ), control,
-                       input_control.layout );
-    if( control.debug_level == 0 )
-      {
-      if( control.outfile ) textpage.print( control );
-      if( control.exportfile ) textpage.xprint( control );
+      Textpage textpage(page_image, my_basename(infile_name), control,
+                        input_control.layout);
+      if (control.debug_level == 0) {
+        if (control.outfile)
+          textpage.print(control);
+        if (control.exportfile)
+          textpage.xprint(control);
       }
+    } catch (Page_image::Error &e) {
+      show_error(e.msg);
+      return 2;
     }
-  catch( Page_image::Error & e ) { show_error( e.msg ); return 2; }
-  if( verbosity >= 1 ) std::fputc( '\n', stderr );
-  return 0;
+    if (verbosity >= 1)
+      std::fputc('\n', stderr);
+    return 0;
   }
 
-int process_full_file( FILE * const infile, const char * const infile_name,
-                       const Input_control & input_control,
-                       const Control & control )
-  {
-  if( verbosity >= 1 )
-    std::fprintf( stderr, "processing file '%s'\n", infile_name );
-  int retval = 0;
-  while( true )
-    {
-    const int tmp = process_file( infile, infile_name, input_control, control );
-    if( retval < tmp ) retval = tmp;
-    if( control.outfile ) std::fflush( control.outfile );
-    if( control.exportfile ) std::fflush( control.exportfile );
-    if( infile != stdin ) break;
-    if( tmp <= 1 )		// detect EOF
+  int process_full_file(FILE *const infile, const char *const infile_name,
+                        const Input_control &input_control,
+                        const Control &control) {
+    if (verbosity >= 1)
+      std::fprintf(stderr, "processing file '%s'\n", infile_name);
+    int retval = 0;
+    while (true) {
+      const int tmp = process_file(infile, infile_name, input_control, control);
+      if (retval < tmp)
+        retval = tmp;
+      if (control.outfile)
+        std::fflush(control.outfile);
+      if (control.exportfile)
+        std::fflush(control.exportfile);
+      if (infile != stdin)
+        break;
+      if (tmp <= 1) // detect EOF
       {
-      int ch;
-      do ch = std::fgetc( infile ); while( ch == 0 || std::isspace( ch ) );
-      std::ungetc( ch, infile );
+        int ch;
+        do
+          ch = std::fgetc(infile);
+        while (ch == 0 || std::isspace(ch));
+        std::ungetc(ch, infile);
       }
-    if( tmp > 1 || std::feof( infile ) || std::ferror( infile ) ) break;
+      if (tmp > 1 || std::feof(infile) || std::ferror(infile))
+        break;
     }
-  if( std::fclose( infile ) != 0 )
-    {
-    show_error( ( infile != stdin ) ? "Error closing input file" :
-                                      "Error closing stdin", errno );
-    if( retval < 1 ) retval = 1;
+    if (std::fclose(infile) != 0) {
+      show_error((infile != stdin) ? "Error closing input file"
+                                   : "Error closing stdin",
+                 errno);
+      if (retval < 1)
+        retval = 1;
     }
-  return retval;
+    return retval;
   }
 
 } // end namespace
-
 
 // 'infile' contains the scanned image (in pnm format) to be converted
 // to text.
@@ -280,57 +295,56 @@ int process_full_file( FILE * const infile, const char * const infile_name,
 // image. (or for a pnm file if debugging).
 // 'exportfile' is the Ocr Results File.
 //
-int main( const int argc, const char * const argv[] )
-  {
+int main(const int argc, const char *const argv[]) {
   Input_control input_control;
   Control control;
-  const char * outfile_name = 0, * exportfile_name = 0;
+  const char *outfile_name = 0, *exportfile_name = 0;
   bool append = false, force = false;
   invocation_name = argv[0];
 
-  const Arg_parser::Option options[] =
-    {
-    { '1', 0,             Arg_parser::no  },
-    { '2', 0,             Arg_parser::no  },
-    { '3', 0,             Arg_parser::no  },
-    { '4', 0,             Arg_parser::no  },
-    { '5', 0,             Arg_parser::no  },
-    { '6', 0,             Arg_parser::no  },
-    { 'a', "append",      Arg_parser::no  },
-    { 'c', "charset",     Arg_parser::yes },
-    { 'C', "copy",        Arg_parser::no  },
-    { 'D', "debug",       Arg_parser::yes },
-    { 'e', "filter",      Arg_parser::yes },
-    { 'E', "user-filter", Arg_parser::yes },
-    { 'f', "force",       Arg_parser::no  },
-    { 'F', "format",      Arg_parser::yes },
-    { 'h', "help",        Arg_parser::no  },
-    { 'i', "invert",      Arg_parser::no  },
-    { 'l', "layout",      Arg_parser::no  },
-    { 'o', "output",      Arg_parser::yes },
-    { 'q', "quiet",       Arg_parser::no  },
-    { 's', "scale",       Arg_parser::yes },
-    { 't', "transform",   Arg_parser::yes },
-    { 'T', "threshold",   Arg_parser::yes },
-    { 'u', "cut",         Arg_parser::yes },
-    { 'v', "verbose",     Arg_parser::no  },
-    { 'V', "version",     Arg_parser::no  },
-    { 'x', "export",      Arg_parser::yes },
-    {  0 , 0,             Arg_parser::no  } };
+  const Arg_parser::Option options[] = {{'1', 0, Arg_parser::no},
+                                        {'2', 0, Arg_parser::no},
+                                        {'3', 0, Arg_parser::no},
+                                        {'4', 0, Arg_parser::no},
+                                        {'5', 0, Arg_parser::no},
+                                        {'6', 0, Arg_parser::no},
+                                        {'a', "append", Arg_parser::no},
+                                        {'c', "charset", Arg_parser::yes},
+                                        {'C', "copy", Arg_parser::no},
+                                        {'D', "debug", Arg_parser::yes},
+                                        {'e', "filter", Arg_parser::yes},
+                                        {'E', "user-filter", Arg_parser::yes},
+                                        {'f', "force", Arg_parser::no},
+                                        {'F', "format", Arg_parser::yes},
+                                        {'h', "help", Arg_parser::no},
+                                        {'i', "invert", Arg_parser::no},
+                                        {'l', "layout", Arg_parser::no},
+                                        {'o', "output", Arg_parser::yes},
+                                        {'q', "quiet", Arg_parser::no},
+                                        {'s', "scale", Arg_parser::yes},
+                                        {'t', "transform", Arg_parser::yes},
+                                        {'T', "threshold", Arg_parser::yes},
+                                        {'u', "cut", Arg_parser::yes},
+                                        {'v', "verbose", Arg_parser::no},
+                                        {'V', "version", Arg_parser::no},
+                                        {'x', "export", Arg_parser::yes},
+                                        {0, 0, Arg_parser::no}};
 
-  const Arg_parser parser( argc, argv, options );
-  if( parser.error().size() )				// bad option
-    { show_error( parser.error().c_str(), 0, true ); return 1; }
+  const Arg_parser parser(argc, argv, options);
+  if (parser.error().size()) // bad option
+  {
+    show_error(parser.error().c_str(), 0, true);
+    return 1;
+  }
 
   int retval = 0;
   int argind = 0;
-  for( ; argind < parser.arguments(); ++argind )
-    {
-    const int code = parser.code( argind );
-    if( !code ) break;					// no more options
-    const char * const arg = parser.argument( argind ).c_str();
-    switch( code )
-      {
+  for (; argind < parser.arguments(); ++argind) {
+    const int code = parser.code(argind);
+    if (!code)
+      break; // no more options
+    const char *const arg = parser.argument(argind).c_str();
+    switch (code) {
       case '1':
       case '2':
       case '3':
@@ -338,108 +352,130 @@ int main( const int argc, const char * const argv[] )
       case '5':
       case '6': control.filetype = code; break;
       case 'a': append = true; break;
-      case 'c': if( !control.charset.enable( arg ) )
-                  { control.charset.show_error( program_name, arg ); return 1; }
-                break;
+      case 'c':
+        if (!control.charset.enable(arg)) {
+          control.charset.show_error(program_name, arg);
+          return 1;
+        }
+        break;
       case 'C': input_control.copy = true; break;
-      case 'D': control.debug_level = std::strtol( arg, 0, 0 ); break;
-      case 'e': if( !control.add_filter( program_name, arg ) ) return 1;
-                break;
-      case 'E': retval = control.add_user_filter( program_name, arg );
-                if( retval != 0 ) return retval;
-                break;
+      case 'D': control.debug_level = std::strtol(arg, 0, 0); break;
+      case 'e':
+        if (!control.add_filter(program_name, arg))
+          return 1;
+        break;
+      case 'E':
+        retval = control.add_user_filter(program_name, arg);
+        if (retval != 0)
+          return retval;
+        break;
       case 'f': force = true; break;
-      case 'F': if( !control.set_format( arg ) )
-                  { show_error( "bad output format.", 0, true ); return 1; }
-                break;
+      case 'F':
+        if (!control.set_format(arg)) {
+          show_error("bad output format.", 0, true);
+          return 1;
+        }
+        break;
       case 'h': show_help(); return 0;
       case 'i': input_control.invert = true; break;
       case 'l': input_control.layout = true; break;
       case 'o': outfile_name = arg; break;
       case 'q': verbosity = -1; break;
-      case 's': input_control.scale = std::strtol( arg, 0, 0 ); break;
-      case 't': if( !input_control.transformation.set( arg ) )
-                  { input_control.transformation.show_error( program_name, arg );
-                  return 1; }
-                break;
-      case 'T': if( !input_control.parse_threshold( arg ) ) return 1; break;
-      case 'u': if( !input_control.parse_cut_rectangle( arg ) ) return 1; break;
-      case 'v': if( verbosity < 4 ) ++verbosity; break;
+      case 's': input_control.scale = std::strtol(arg, 0, 0); break;
+      case 't':
+        if (!input_control.transformation.set(arg)) {
+          input_control.transformation.show_error(program_name, arg);
+          return 1;
+        }
+        break;
+      case 'T':
+        if (!input_control.parse_threshold(arg))
+          return 1;
+        break;
+      case 'u':
+        if (!input_control.parse_cut_rectangle(arg))
+          return 1;
+        break;
+      case 'v':
+        if (verbosity < 4)
+          ++verbosity;
+        break;
       case 'V': show_version(); return 0;
       case 'x': exportfile_name = arg; break;
-      default : Ocrad::internal_error( "uncaught option." );
-      }
-    } // end process options
+      default: Ocrad::internal_error("uncaught option.");
+    }
+  } // end process options
 
 #if defined(__MSVCRT__) || defined(__OS2__) || defined(__DJGPP__)
-  setmode( STDIN_FILENO, O_BINARY );
-  setmode( STDOUT_FILENO, O_BINARY );
+  setmode(STDIN_FILENO, O_BINARY);
+  setmode(STDOUT_FILENO, O_BINARY);
 #endif
 
-  if( outfile_name && std::strcmp( outfile_name, "-" ) != 0 )
-    {
-    if( append ) control.outfile = std::fopen( outfile_name, "a" );
-    else if( force ) control.outfile = std::fopen( outfile_name, "w" );
-    else if( ( control.outfile = std::fopen( outfile_name, "wx" ) ) == 0 )
-      {
-      if( verbosity >= 0 )
-        std::fprintf( stderr, "Output file %s already exists.\n", outfile_name );
+  if (outfile_name && std::strcmp(outfile_name, "-") != 0) {
+    if (append)
+      control.outfile = std::fopen(outfile_name, "a");
+    else if (force)
+      control.outfile = std::fopen(outfile_name, "w");
+    else if ((control.outfile = std::fopen(outfile_name, "wx")) == 0) {
+      if (verbosity >= 0)
+        std::fprintf(stderr, "Output file %s already exists.\n", outfile_name);
       return 1;
-      }
-    if( !control.outfile )
-      {
-      if( verbosity >= 0 )
-        std::fprintf( stderr, "Can't open '%s'\n", outfile_name );
-      return 1;
-      }
     }
+    if (!control.outfile) {
+      if (verbosity >= 0)
+        std::fprintf(stderr, "Can't open '%s'\n", outfile_name);
+      return 1;
+    }
+  }
 
-  if( exportfile_name && control.debug_level == 0 && !input_control.copy )
-    {
-    if( std::strcmp( exportfile_name, "-" ) == 0 )
-      { control.exportfile = stdout; if( !outfile_name ) control.outfile = 0; }
-    else
-      {
-      control.exportfile = std::fopen( exportfile_name, "w" );
-      if( !control.exportfile )
-        {
-        if( verbosity >= 0 )
-          std::fprintf( stderr, "Can't open '%s'\n", exportfile_name );
+  if (exportfile_name && control.debug_level == 0 && !input_control.copy) {
+    if (std::strcmp(exportfile_name, "-") == 0) {
+      control.exportfile = stdout;
+      if (!outfile_name)
+        control.outfile = 0;
+    } else {
+      control.exportfile = std::fopen(exportfile_name, "w");
+      if (!control.exportfile) {
+        if (verbosity >= 0)
+          std::fprintf(stderr, "Can't open '%s'\n", exportfile_name);
         return 1;
-        }
       }
-    std::fprintf( control.exportfile,
-                  "# Ocr Results File. Created by GNU Ocrad version %s\n",
-                  PROGVERSION );
     }
+    std::fprintf(control.exportfile,
+                 "# Ocr Results File. Created by GNU Ocrad version %s\n",
+                 PROGVERSION);
+  }
 
   // process any remaining command line arguments (input files)
   bool stdin_used = false;
-  for( bool first = true; first || argind < parser.arguments(); first = false )
-    {
-    const char * infile_name = ( argind < parser.arguments() ) ?
-                               parser.argument( argind++ ).c_str() : "-";
-    FILE * infile;
-    if( std::strcmp( infile_name, "-" ) == 0 )
-      {
-      if( stdin_used ) continue; else stdin_used = true;
-      infile = stdin;
-      }
-    else
-      {
-      infile = std::fopen( infile_name, "rb" );
-      if( !infile )
-        {
-        if( verbosity >= 0 )
-          std::fprintf( stderr, "Can't open '%s'\n", infile_name );
-        if( retval < 1 ) retval = 1;
+  for (bool first = true; first || argind < parser.arguments(); first = false) {
+    const char *infile_name =
+        (argind < parser.arguments()) ? parser.argument(argind++).c_str() : "-";
+    FILE *infile;
+    if (std::strcmp(infile_name, "-") == 0) {
+      if (stdin_used)
         continue;
-        }
+      else
+        stdin_used = true;
+      infile = stdin;
+    } else {
+      infile = std::fopen(infile_name, "rb");
+      if (!infile) {
+        if (verbosity >= 0)
+          std::fprintf(stderr, "Can't open '%s'\n", infile_name);
+        if (retval < 1)
+          retval = 1;
+        continue;
       }
-    const int tmp = process_full_file( infile, infile_name, input_control, control );
-    if( retval < tmp ) retval = tmp;
     }
-  if( control.outfile ) std::fclose( control.outfile );
-  if( control.exportfile ) std::fclose( control.exportfile );
-  return retval;
+    const int tmp =
+        process_full_file(infile, infile_name, input_control, control);
+    if (retval < tmp)
+      retval = tmp;
   }
+  if (control.outfile)
+    std::fclose(control.outfile);
+  if (control.exportfile)
+    std::fclose(control.exportfile);
+  return retval;
+}

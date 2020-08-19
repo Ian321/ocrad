@@ -15,26 +15,26 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-struct Csegment			// cartesian (one-dimensional) segment
-  {
-  int left, right;		// l > r means no segment
-				// in vertical segments, left is top
+struct Csegment // cartesian (one-dimensional) segment
+{
+  int left, right; // l > r means no segment
+                   // in vertical segments, left is top
 
-  explicit Csegment( const int l = 1, const int r = 0 )
-    : left( l ), right( r ) {}
+  explicit Csegment(const int l = 1, const int r = 0) : left(l), right(r) {}
 
-  void add_point( const int col );
-  void add_csegment( const Csegment & seg );
+  void add_point(const int col);
+  void add_csegment(const Csegment &seg);
 
-  bool valid() const { return ( left <= right ); }
-  int size() const { return ( left <= right ) ? right - left + 1 : 0; }
-  bool includes( const Csegment & seg ) const
-    { return ( seg.valid() && left <= seg.left && seg.right <= right ); }
-  bool includes( const int col ) const
-    { return ( left <= col && col <= right ); }
-  bool overlaps( const Csegment & seg ) const
-    { return ( valid() && seg.valid() && left <= seg.right && right >= seg.left ); }
+  bool valid() const { return (left <= right); }
+  int size() const { return (left <= right) ? right - left + 1 : 0; }
+  bool includes(const Csegment &seg) const {
+    return (seg.valid() && left <= seg.left && seg.right <= right);
+  }
+  bool includes(const int col) const { return (left <= col && col <= right); }
+  bool overlaps(const Csegment &seg) const {
+    return (valid() && seg.valid() && left <= seg.right && right >= seg.left);
+  }
 
-  int distance( const Csegment & seg ) const;
-  int distance( const int col ) const;
-  };
+  int distance(const Csegment &seg) const;
+  int distance(const int col) const;
+};

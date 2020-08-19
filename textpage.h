@@ -17,24 +17,23 @@
 
 class Textblock;
 
-class Textpage : public Rectangle
-  {
+class Textpage : public Rectangle {
   const std::string name;
-  std::vector< Textblock * > tbpv;
+  std::vector<Textblock *> tbpv;
 
-  Textpage( const Textpage & );			// declared as private
-  void operator=( const Textpage & );		// declared as private
+  Textpage(const Textpage &);       // declared as private
+  void operator=(const Textpage &); // declared as private
 
 public:
-  Textpage( const Page_image & page_image, const char * const filename,
-            const Control & control, const bool layout );
+  Textpage(const Page_image &page_image, const char *const filename,
+           const Control &control, const bool layout);
   ~Textpage();
 
-  const Textblock & textblock( const int i ) const;
+  const Textblock &textblock(const int i) const;
   int textblocks() const { return tbpv.size(); }
   int textlines() const;
   int characters() const;
 
-  void print( const Control & control ) const;
-  void xprint( const Control & control ) const;
-  };
+  void print(const Control &control) const;
+  void xprint(const Control &control) const;
+};

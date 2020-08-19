@@ -15,37 +15,36 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-class Mask : public Rectangle
-  {
-  std::vector< Csegment > data;			// csegment in each line
+class Mask : public Rectangle {
+  std::vector<Csegment> data; // csegment in each line
 
 public:
-      // Creates a rectangular Mask
-  explicit Mask( const Rectangle & re )
-    : Rectangle( re ), data( height(), Csegment( re.left(), re.right() ) ) {}
-  Mask( const int l, const int t, const int r, const int b )
-    : Rectangle( l, t, r, b ), data( height(), Csegment( l, r ) ) {}
+  // Creates a rectangular Mask
+  explicit Mask(const Rectangle &re)
+      : Rectangle(re), data(height(), Csegment(re.left(), re.right())) {}
+  Mask(const int l, const int t, const int r, const int b)
+      : Rectangle(l, t, r, b), data(height(), Csegment(l, r)) {}
 
-  using Rectangle::left;
-  using Rectangle::top;
-  using Rectangle::right;
   using Rectangle::bottom;
   using Rectangle::height;
+  using Rectangle::left;
+  using Rectangle::right;
+  using Rectangle::top;
 
-  int left ( const int row ) const;
-  int right( const int row ) const;
+  int left(const int row) const;
+  int right(const int row) const;
 
-  void top   ( const int t );
-  void bottom( const int b );
-  void height( const int h ) { bottom( top() + h - 1 ); }
+  void top(const int t);
+  void bottom(const int b);
+  void height(const int h) { bottom(top() + h - 1); }
 
-  void add_mask( const Mask & m );
-  void add_point( const int row, const int col );
-  void add_rectangle( const Rectangle & re );
+  void add_mask(const Mask &m);
+  void add_point(const int row, const int col);
+  void add_rectangle(const Rectangle &re);
 
-  bool includes( const Rectangle & re ) const;
-  bool includes( const int row, const int col ) const;
+  bool includes(const Rectangle &re) const;
+  bool includes(const int row, const int col) const;
 
-  int distance( const Rectangle & re ) const;
-  int distance( const int row, const int col ) const;
-  };
+  int distance(const Rectangle &re) const;
+  int distance(const int row, const int col) const;
+};

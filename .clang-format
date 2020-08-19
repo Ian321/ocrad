@@ -1,0 +1,8 @@
+---
+Language: Cpp
+IndentWidth: 2
+IndentCaseLabels: true
+NamespaceIndentation: All
+AllowShortCaseLabelsOnASingleLine: true
+AlignTrailingComments: true
+---

@@ -15,46 +15,45 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-class Blob : public Bitmap
-  {
-  std::vector< Bitmap * > holepv;		// vector of holes
+class Blob : public Bitmap {
+  std::vector<Bitmap *> holepv; // vector of holes
 
 public:
-  Blob( const int l, const int t, const int r, const int b )
-    : Bitmap( l, t, r, b ) {}
+  Blob(const int l, const int t, const int r, const int b)
+      : Bitmap(l, t, r, b) {}
 
-  Blob( const Bitmap & source, const Rectangle & re )
-    : Bitmap( source, re ) {}
+  Blob(const Bitmap &source, const Rectangle &re) : Bitmap(source, re) {}
 
-  Blob( const Blob & b );
-  Blob & operator=( const Blob & b );
+  Blob(const Blob &b);
+  Blob &operator=(const Blob &b);
 
   ~Blob();
 
-  using Bitmap::left;
-  using Bitmap::top;
-  using Bitmap::right;
   using Bitmap::bottom;
   using Bitmap::height;
+  using Bitmap::left;
+  using Bitmap::right;
+  using Bitmap::top;
   using Bitmap::width;
-  void left  ( const int l );
-  void top   ( const int t );
-  void right ( const int r );
-  void bottom( const int b );
-  void height( const int h ) { bottom( top() + h - 1 ); }
-  void width ( const int w ) { right( left() + w - 1 ); }
+  void left(const int l);
+  void top(const int t);
+  void right(const int r);
+  void bottom(const int b);
+  void height(const int h) { bottom(top() + h - 1); }
+  void width(const int w) { right(left() + w - 1); }
 
-  const Bitmap & hole( const int i ) const;
+  const Bitmap &hole(const int i) const;
   int holes() const { return holepv.size(); }
   //  id = 1 for blob dots, negative for hole dots, 0 otherwise
-  int id( const int row, const int col ) const;
+  int id(const int row, const int col) const;
 
-  bool is_abnormal() const
-    { return height() < 10 || height() >= 5 * width() || width() >= 3 * height(); }
+  bool is_abnormal() const {
+    return height() < 10 || height() >= 5 * width() || width() >= 3 * height();
+  }
   bool test_BD() const;
   bool test_Q() const;
-  void print( FILE * const outfile ) const;
+  void print(FILE *const outfile) const;
 
-  void fill_hole( const int i );
+  void fill_hole(const int i);
   void find_holes();
-  };
+};

@@ -19,42 +19,44 @@
 
 #include "segment.h"
 
+void Csegment::add_point(const int col) {
+  if (!valid())
+    left = right = col;
+  else if (col < left)
+    left = col;
+  else if (col > right)
+    right = col;
+}
 
-void Csegment::add_point( const int col )
-  {
-  if( !valid() ) left = right = col;
-  else if( col < left ) left = col;
-  else if( col > right ) right = col;
-  }
-
-
-void Csegment::add_csegment( const Csegment & seg )
-  {
-  if( seg.valid() )
-    {
-    if( !valid() ) *this = seg;
-    else
-      {
-      if( seg.left < left ) left = seg.left;
-      if( seg.right > right ) right = seg.right;
-      }
+void Csegment::add_csegment(const Csegment &seg) {
+  if (seg.valid()) {
+    if (!valid())
+      *this = seg;
+    else {
+      if (seg.left < left)
+        left = seg.left;
+      if (seg.right > right)
+        right = seg.right;
     }
   }
+}
 
-
-int Csegment::distance( const Csegment & seg ) const
-  {
-  if( !valid() || !seg.valid() ) return INT_MAX;
-  if( seg.right < left ) return left - seg.right;
-  if( seg.left > right ) return seg.left - right;
+int Csegment::distance(const Csegment &seg) const {
+  if (!valid() || !seg.valid())
+    return INT_MAX;
+  if (seg.right < left)
+    return left - seg.right;
+  if (seg.left > right)
+    return seg.left - right;
   return 0;
-  }
+}
 
-
-int Csegment::distance( const int col ) const
-  {
-  if( !valid() ) return INT_MAX;
-  if( col < left ) return left - col;
-  if( col > right ) return col - right;
+int Csegment::distance(const int col) const {
+  if (!valid())
+    return INT_MAX;
+  if (col < left)
+    return left - col;
+  if (col > right)
+    return col - right;
   return 0;
-  }
+}

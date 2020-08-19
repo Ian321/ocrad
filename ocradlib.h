@@ -19,8 +19,7 @@
 extern "C" {
 #endif
 
-const char * const OCRAD_version_string = "0.27";
-
+const char *const OCRAD_version_string = "0.27";
 
 /* OCRAD_Pixmap.data is a pointer to image data formed by "height" rows
    of "width" pixels each.
@@ -31,70 +30,68 @@ const char * const OCRAD_version_string = "0.27";
 
 enum OCRAD_Pixmap_Mode { OCRAD_bitmap, OCRAD_greymap, OCRAD_colormap };
 
-struct OCRAD_Pixmap
-  {
-  const unsigned char * data;
+struct OCRAD_Pixmap {
+  const unsigned char *data;
   int height;
   int width;
   enum OCRAD_Pixmap_Mode mode;
-  };
+};
 
-
-enum OCRAD_Errno { OCRAD_ok = 0, OCRAD_bad_argument, OCRAD_mem_error,
-                   OCRAD_sequence_error, OCRAD_library_error };
+enum OCRAD_Errno {
+  OCRAD_ok = 0,
+  OCRAD_bad_argument,
+  OCRAD_mem_error,
+  OCRAD_sequence_error,
+  OCRAD_library_error
+};
 
 struct OCRAD_Descriptor;
 
-
-const char * OCRAD_version( void );
-
+const char *OCRAD_version(void);
 
 /*--------------------- Functions ---------------------*/
 
-struct OCRAD_Descriptor * OCRAD_open( void );
+struct OCRAD_Descriptor *OCRAD_open(void);
 
-int OCRAD_close( struct OCRAD_Descriptor * const ocrdes );
+int OCRAD_close(struct OCRAD_Descriptor *const ocrdes);
 
-enum OCRAD_Errno OCRAD_get_errno( struct OCRAD_Descriptor * const ocrdes );
+enum OCRAD_Errno OCRAD_get_errno(struct OCRAD_Descriptor *const ocrdes);
 
-int OCRAD_set_image( struct OCRAD_Descriptor * const ocrdes,
-                     const struct OCRAD_Pixmap * const image,
-                     const bool invert );
+int OCRAD_set_image(struct OCRAD_Descriptor *const ocrdes,
+                    const struct OCRAD_Pixmap *const image, const bool invert);
 
-int OCRAD_set_image_from_file( struct OCRAD_Descriptor * const ocrdes,
-                               const char * const filename,
-                               const bool invert );
+int OCRAD_set_image_from_file(struct OCRAD_Descriptor *const ocrdes,
+                              const char *const filename, const bool invert);
 
-int OCRAD_set_utf8_format( struct OCRAD_Descriptor * const ocrdes,
-                           const bool utf8 );		// 0 = byte, 1 = utf8
+int OCRAD_set_utf8_format(struct OCRAD_Descriptor *const ocrdes,
+                          const bool utf8); // 0 = byte, 1 = utf8
 
-int OCRAD_set_threshold( struct OCRAD_Descriptor * const ocrdes,
-                         const int threshold );		// 0..255, -1 = auto
+int OCRAD_set_threshold(struct OCRAD_Descriptor *const ocrdes,
+                        const int threshold); // 0..255, -1 = auto
 
-int OCRAD_scale( struct OCRAD_Descriptor * const ocrdes, const int value );
+int OCRAD_scale(struct OCRAD_Descriptor *const ocrdes, const int value);
 
-int OCRAD_recognize( struct OCRAD_Descriptor * const ocrdes,
-                     const bool layout );
+int OCRAD_recognize(struct OCRAD_Descriptor *const ocrdes, const bool layout);
 
-int OCRAD_result_blocks( struct OCRAD_Descriptor * const ocrdes );
+int OCRAD_result_blocks(struct OCRAD_Descriptor *const ocrdes);
 
-int OCRAD_result_lines( struct OCRAD_Descriptor * const ocrdes,
-                        const int blocknum );		// 0..blocks-1
+int OCRAD_result_lines(struct OCRAD_Descriptor *const ocrdes,
+                       const int blocknum); // 0..blocks-1
 
-int OCRAD_result_chars_total( struct OCRAD_Descriptor * const ocrdes );
+int OCRAD_result_chars_total(struct OCRAD_Descriptor *const ocrdes);
 
-int OCRAD_result_chars_block( struct OCRAD_Descriptor * const ocrdes,
-                              const int blocknum );	// 0..blocks-1
+int OCRAD_result_chars_block(struct OCRAD_Descriptor *const ocrdes,
+                             const int blocknum); // 0..blocks-1
 
-int OCRAD_result_chars_line( struct OCRAD_Descriptor * const ocrdes,
-                             const int blocknum,	// 0..blocks-1
-                             const int linenum );	// 0..lines(block)-1
+int OCRAD_result_chars_line(struct OCRAD_Descriptor *const ocrdes,
+                            const int blocknum, // 0..blocks-1
+                            const int linenum); // 0..lines(block)-1
 
-const char * OCRAD_result_line( struct OCRAD_Descriptor * const ocrdes,
-                                const int blocknum,	// 0..blocks-1
-                                const int linenum );	// 0..lines(block)-1
+const char *OCRAD_result_line(struct OCRAD_Descriptor *const ocrdes,
+                              const int blocknum, // 0..blocks-1
+                              const int linenum); // 0..lines(block)-1
 
-int OCRAD_result_first_character( struct OCRAD_Descriptor * const ocrdes );
+int OCRAD_result_first_character(struct OCRAD_Descriptor *const ocrdes);
 
 #ifdef __cplusplus
 }

@@ -15,56 +15,63 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-class Profile
-  {
+class Profile {
 public:
   enum Type { left, top, right, bottom, height, width };
 
 private:
-  const Bitmap & bm;		// Bitmap to witch this profile belongs
-				// can be a Blob or a hole
+  const Bitmap &bm; // Bitmap to witch this profile belongs
+                    // can be a Blob or a hole
   Type type;
   int limit_, max_, min_, mean_;
-  signed char isconcave_, isconvex_, isflat_, isflats_,
-              ispit_, istpit_, isupit_, isvpit_, istip_;
-  std::vector< int > data;
+  signed char isconcave_, isconvex_, isflat_, isflats_, ispit_, istpit_,
+      isupit_, isvpit_, istip_;
+  std::vector<int> data;
 
   void initialize();
   int mean();
 
 public:
-  Profile( const Bitmap & bm_, const Type t );
+  Profile(const Bitmap &bm_, const Type t);
 
-//  const Bitmap & bitmap() const { return bm; }
+  //  const Bitmap & bitmap() const { return bm; }
 
-  int limit() { if( limit_ < 0 ) initialize(); return limit_; }
+  int limit() {
+    if (limit_ < 0)
+      initialize();
+    return limit_;
+  }
   int max();
-  int max( const int l, int r = -1 );
+  int max(const int l, int r = -1);
   int min();
-  int min( const int l, int r = -1 );
-  int operator[]( int i );
-  int pos( const int p ) { return ( ( samples() - 1 ) * p ) / 100; }
+  int min(const int l, int r = -1);
+  int operator[](int i);
+  int pos(const int p) { return ((samples() - 1) * p) / 100; }
   int range() { return max() - min(); }
-  int samples() { if( limit_ < 0 ) initialize(); return data.size(); }
+  int samples() {
+    if (limit_ < 0)
+      initialize();
+    return data.size();
+  }
 
-  int  area( const int l = 0, int r = -1 );
-  bool increasing( int i = 1, const int min_delta = 2 );
-  bool decreasing( int i = 1, int end = -1 );
+  int area(const int l = 0, int r = -1);
+  bool increasing(int i = 1, const int min_delta = 2);
+  bool decreasing(int i = 1, int end = -1);
   bool isconcave();
   bool isconvex();
   bool isflat();
   bool isflats();
   bool ispit();
-  bool iscpit( const int cpos = 50 );
+  bool iscpit(const int cpos = 50);
   bool istpit();
   bool isupit();
   bool isvpit();
   bool istip();
-  bool isctip( const int cpos = 50 );
+  bool isctip(const int cpos = 50);
   bool isltip();
   bool isrtip();
-  int  imaximum();
-  int  iminimum( const int m = 0, int th = -1 );
-  int  minima( int th = -1 );
-  bool straight( int * const dyp );
-  };
+  int imaximum();
+  int iminimum(const int m = 0, int th = -1);
+  int minima(int th = -1);
+  bool straight(int *const dyp);
+};

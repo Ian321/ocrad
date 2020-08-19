@@ -17,15 +17,17 @@
 
 namespace ISO_8859 {
 
-// 'seq[i]' begins a escape sequence (the characters following a '\').
-// Returns the corresponding code and, in '*lenp', the characters read.
-// Returns -1 if error.
-//
-int escape( const std::string & seq, const unsigned i, int *lenp = 0 );
+  // 'seq[i]' begins a escape sequence (the characters following a '\').
+  // Returns the corresponding code and, in '*lenp', the characters read.
+  // Returns -1 if error.
+  //
+  int escape(const std::string &seq, const unsigned i, int *lenp = 0);
 
-inline bool isodigit( const unsigned char ch )	// is 'ch' an octal digit?
-  { return ( ch <= '7' && ch >= '0' ); }
+  inline bool isodigit(const unsigned char ch) // is 'ch' an octal digit?
+  {
+    return (ch <= '7' && ch >= '0');
+  }
 
-int xvalue( const unsigned char ch );		// value of hex digit 'ch' or -1
+  int xvalue(const unsigned char ch); // value of hex digit 'ch' or -1
 
 } // end namespace ISO_8859

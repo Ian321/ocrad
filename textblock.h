@@ -15,28 +15,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-class Textblock : public Rectangle
-  {
-  mutable std::vector< Textline * > tlpv;
+class Textblock : public Rectangle {
+  mutable std::vector<Textline *> tlpv;
 
-  Textblock( const Textblock & );		// declared as private
-  void operator=( const Textblock & );		// declared as private
+  Textblock(const Textblock &);      // declared as private
+  void operator=(const Textblock &); // declared as private
 
-  void apply_filters( const Control & control );
+  void apply_filters(const Control &control);
 
 public:
-  Textblock( const Rectangle & page, const Rectangle & block,
-             std::vector< Blob * > & blobp_vector );
+  Textblock(const Rectangle &page, const Rectangle &block,
+            std::vector<Blob *> &blobp_vector);
   ~Textblock();
-  void recognize( const Control & control );
+  void recognize(const Control &control);
 
-  const Textline & textline( const int i ) const;
+  const Textline &textline(const int i) const;
   int textlines() const { return tlpv.size(); }
   int characters() const;
 
-  void print( const Control & control ) const;
-  void dprint( const Control & control, bool graph, bool recursive ) const;
-  void xprint( const Control & control ) const;
-  void cmark( Page_image & page_image ) const;
-  void lmark( Page_image & page_image ) const;
-  };
+  void print(const Control &control) const;
+  void dprint(const Control &control, bool graph, bool recursive) const;
+  void xprint(const Control &control) const;
+  void cmark(Page_image &page_image) const;
+  void lmark(Page_image &page_image) const;
+};
