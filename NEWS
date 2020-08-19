@@ -1,0 +1,11 @@
+Changes in version 0.27:
+
+Maintenance release.
+
+A GCC warning about catching std::bad_alloc by value has been fixed.
+(Thanks to Mohammad Akhlaghi).
+
+Errors are now also checked when closing the input file.
+
+The configure script now accepts appending options to CXXFLAGS using the
+syntax 'CXXFLAGS+=OPTIONS'.
