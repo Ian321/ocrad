@@ -9,7 +9,7 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
       fail-fast: false
-    
+
     steps:
       - uses: actions/checkout@v1
 

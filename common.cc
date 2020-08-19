@@ -86,7 +86,7 @@ bool Ocrad::similar(const int a, const int b, const int percent_dif,
   return (difference * 100 <= max_abs * percent_dif);
 }
 
-bool Ocrad::similar(const int a, const int b, const int percent_dif)  {
+bool Ocrad::similar(const int a, const int b, const int percent_dif) {
   return similar(a, b, percent_dif, 1);
 }
 
