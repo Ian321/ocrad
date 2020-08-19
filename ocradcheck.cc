@@ -17,7 +17,11 @@
 #include <cstdlib>
 #include <cstring>
 #include <stdint.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #include "ocradlib.h"
 

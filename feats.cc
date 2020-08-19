@@ -106,6 +106,7 @@ int Features::hbars() const
         case 0: if( seg.size() <= limit ) break;
                 state = 1; begin = i; l = seg.left; r = seg.right;
                 if( i < b.height() - 1 ) break;
+                [[fallthrough]];
         case 1: if( seg.size() > limit &&
                     ( i <= begin || seg.overlaps( segv[i-1] ) ) )
                   {

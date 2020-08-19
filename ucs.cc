@@ -100,39 +100,48 @@ int UCS::compose( const int letter, const int accent )
     case 'A': if( accent == '\'') return CAACUTE;
               if( accent == '`' ) return CAGRAVE;
               if( accent == '^' ) return CACIRCU;
-              if( accent == ':' ) return CADIAER; break;
+              if( accent == ':' ) return CADIAER;
+              break;
     case 'E': if( accent == '\'') return CEACUTE;
               if( accent == '`' ) return CEGRAVE;
               if( accent == '^' ) return CECIRCU;
-              if( accent == ':' ) return CEDIAER; break;
+              if( accent == ':' ) return CEDIAER;
+              break;
     case 'G': return CGBREVE;
     case '[':
     case 'I': if( accent == '\'') return CIACUTE;
               if( accent == '`' ) return CIGRAVE;
               if( accent == '^' ) return CICIRCU;
-              if( accent == ':' ) return CIDIAER; break;
-    case 'N': if( accent != ':' ) return CNTILDE; break;
+              if( accent == ':' ) return CIDIAER;
+              break;
+    case 'N': if( accent != ':' ) return CNTILDE;
+              break;
     case 'O': if( accent == '\'') return COACUTE;
               if( accent == '`' ) return COGRAVE;
               if( accent == '^' ) return COCIRCU;
-              if( accent == ':' ) return CODIAER; break;
+              if( accent == ':' ) return CODIAER;
+              break;
     case 'S': return CSCARON;
     case 'U':
     case 'V': if( accent == '\'') return CUACUTE;
               if( accent == '`' ) return CUGRAVE;
               if( accent == '^' ) return CUCIRCU;
-              if( accent == ':' ) return CUDIAER; break;
+              if( accent == ':' ) return CUDIAER;
+              break;
     case 'Y': if( accent == '\'') return CYACUTE;
-              if( accent == ':' ) return CYDIAER; break;
+              if( accent == ':' ) return CYDIAER;
+              break;
     case 'Z': return CZCARON;
     case 'a': if( accent == '\'') return SAACUTE;
               if( accent == '`' ) return SAGRAVE;
               if( accent == '^' ) return SACIRCU;
-              if( accent == ':' ) return SADIAER; break;
+              if( accent == ':' ) return SADIAER;
+              break;
     case 'e': if( accent == '\'') return SEACUTE;
               if( accent == '`' ) return SEGRAVE;
               if( accent == '^' ) return SECIRCU;
-              if( accent == ':' ) return SEDIAER; break;
+              if( accent == ':' ) return SEDIAER;
+              break;
     case '9':
     case 'g': return SGBREVE;
     case '|':
@@ -141,20 +150,25 @@ int UCS::compose( const int letter, const int accent )
     case 'l': if( accent == '\'') return SIACUTE;
               if( accent == '`' ) return SIGRAVE;
               if( accent == '^' ) return SICIRCU;
-              if( accent == ':' ) return SIDIAER; break;
-    case 'n': if( accent != ':' ) return SNTILDE; break;
+              if( accent == ':' ) return SIDIAER;
+              break;
+    case 'n': if( accent != ':' ) return SNTILDE;
+              break;
     case 'o': if( accent == '\'') return SOACUTE;
               if( accent == '`' ) return SOGRAVE;
               if( accent == '^' ) return SOCIRCU;
-              if( accent == ':' ) return SODIAER; break;
+              if( accent == ':' ) return SODIAER;
+              break;
     case 's': return SSCARON;
     case 'u':
     case 'v': if( accent == '\'') return SUACUTE;
               if( accent == '`' ) return SUGRAVE;
               if( accent == '^' ) return SUCIRCU;
-              if( accent == ':' ) return SUDIAER; break;
+              if( accent == ':' ) return SUDIAER;
+              break;
     case 'y': if( accent == '\'') return SYACUTE;
-              if( accent == ':' ) return SYDIAER; break;
+              if( accent == ':' ) return SYDIAER;
+              break;
     case 'z': return SZCARON;
     }
   return 0;

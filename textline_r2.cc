@@ -496,9 +496,13 @@ void Textline::recognize2( const Charset & charset )
         switch( code )
           {
           case 'g': case 'j': case 'p': case 'q': case 'y':
-                    if( c1.bottom() < c2.bottom() - 2 ) continue; break;
-          case 'Q': if( c1.top() < c2.top() + 2 ) continue; break;
-          default : if( c1.bottom() < c2.bottom() + 2 ) continue;
+            if( c1.bottom() < c2.bottom() - 2 ) continue;
+            break;
+          case 'Q':
+            if( c1.top() < c2.top() + 2 ) continue;
+            break;
+          default:
+            if( c1.bottom() < c2.bottom() + 2 ) continue;
           }
         c1.only_guess( 'y', 0 );
         }
@@ -814,7 +818,7 @@ void Textline::recognize2( const Charset & charset )
     }
   }
 
-  // join the secuence '°', '/', 'o', ' ' into a '%'
+  // join the sequence 'Â°', '/', 'o', ' ' into a '%'
   for( int i = big_initials(); i + 2 < characters(); ++i )
     {
     Character & c1 = character( i );

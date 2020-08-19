@@ -30,7 +30,11 @@
 #include <string>
 #include <vector>
 #include <stdint.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #if defined(__MSVCRT__) || defined(__OS2__) || defined(__DJGPP__)
 #include <fcntl.h>
 #include <io.h>
