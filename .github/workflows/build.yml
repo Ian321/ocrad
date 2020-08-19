@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: Build
         run: |
@@ -23,7 +23,7 @@ jobs:
 
       - name: Upload artifacts (Windows)
         if: startsWith(matrix.os, 'windows')
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: ocrad-windows
           path: |
@@ -31,7 +31,7 @@ jobs:
 
       - name: Upload artifacts (Linux)
         if: startsWith(matrix.os, 'ubuntu')
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: ocrad-linux
           path: |
@@ -39,7 +39,7 @@ jobs:
 
       - name: Upload artifacts (MacOS)
         if: startsWith(matrix.os, 'macos')
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: ocrad-mac
           path: |
