@@ -15,6 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef profile_h
+#define profile_h
+
 class Profile {
 public:
   enum Type { left, top, right, bottom, height, width };
@@ -75,3 +78,4 @@ public:
   int minima(int th = -1);
   bool straight(int *const dyp);
 };
+#endif // profile_h

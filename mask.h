@@ -15,6 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "rectangle.h"
+#include "segment.h"
+
 class Mask : public Rectangle {
   std::vector<Csegment> data; // csegment in each line
 

@@ -15,6 +15,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef feats_h
+#define feats_h
+
+#include "profile.h"
+#include "segment.h"
+
 class Features {
   const Blob &b; // Blob to witch these features belong
   mutable bool hbar_initialized, vbar_initialized;
@@ -73,3 +79,4 @@ public:
   int test_solid(const Rectangle &charbox) const;
   int test_misc(const Rectangle &charbox) const;
 };
+#endif // feats_h

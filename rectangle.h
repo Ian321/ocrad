@@ -15,6 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef rectangle_h
+#define rectangle_h
+
 class Rectangle {
   int left_, top_, right_, bottom_;
 
@@ -78,3 +81,4 @@ public:
 
   static int hypoti(const int c1, const int c2);
 };
+#endif // rectangle_h

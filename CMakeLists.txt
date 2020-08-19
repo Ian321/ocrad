@@ -33,8 +33,10 @@ add_library(SRC_ALL
   ./ucs.cc
   ./user_filter.cc
 )
+set_property(TARGET SRC_ALL PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 add_library(libocrad SHARED ./ocradlib.cc)
+set_target_properties(libocrad PROPERTIES PREFIX "")
 target_link_libraries(libocrad SRC_ALL)
 
 add_executable(ocrad ./main.cc)

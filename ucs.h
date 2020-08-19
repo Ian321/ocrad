@@ -15,6 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef usc_h
+#define usc_h
+
 namespace UCS {
 
   enum {
@@ -134,3 +137,4 @@ namespace UCS {
   int toupper(const int code);
 
 } // end namespace UCS
+#endif // usc_h

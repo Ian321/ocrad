@@ -86,6 +86,10 @@ bool Ocrad::similar(const int a, const int b, const int percent_dif,
   return (difference * 100 <= max_abs * percent_dif);
 }
 
+bool Ocrad::similar(const int a, const int b, const int percent_dif)  {
+  return similar(a, b, percent_dif, 1);
+}
+
 bool Charset::enable(const char *const name) {
   for (int i = 0; i < charsets; ++i)
     if (std::strcmp(name, charset_name[i]) == 0) {

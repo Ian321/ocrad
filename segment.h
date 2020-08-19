@@ -15,6 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef segment_h
+#define segment_h
+
 struct Csegment // cartesian (one-dimensional) segment
 {
   int left, right; // l > r means no segment
@@ -38,3 +41,4 @@ struct Csegment // cartesian (one-dimensional) segment
   int distance(const Csegment &seg) const;
   int distance(const int col) const;
 };
+#endif // segment_h

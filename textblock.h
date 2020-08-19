@@ -15,6 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "textline.h"
+
 class Textblock : public Rectangle {
   mutable std::vector<Textline *> tlpv;
 

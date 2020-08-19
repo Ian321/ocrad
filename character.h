@@ -15,6 +15,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef character_h
+#define character_h
+
+#include "common.h"
+#include "ucs.h"
+
 class Character : public Rectangle {
 public:
   struct Guess {
@@ -87,3 +93,4 @@ public:
   void apply_filter(const Filter::Type filter);
   void apply_user_filter(const User_filter &user_filter);
 };
+#endif // character_h

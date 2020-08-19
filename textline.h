@@ -15,6 +15,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef textline_h
+#define textline_h
+
+#include "track.h"
+
 class Page_image;
 class Rational;
 
@@ -68,3 +73,4 @@ public:
   void join_broken_unrecognized_characters();
   void remove_leadind_trailing_duplicate_spaces();
 };
+#endif // textline_h

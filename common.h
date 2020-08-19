@@ -15,13 +15,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef common_h
+#define common_h
+
 extern int verbosity;
 
 namespace Ocrad {
 
   void internal_error(const char *const msg);
   bool similar(const int a, const int b, const int percent_dif,
-               const int abs_dif = 1);
+               const int abs_dif);
+  bool similar(const int a, const int b, const int percent_dif);
 
 } // end namespace Ocrad
 
@@ -102,3 +106,4 @@ struct Control {
                       const char *const file_name);
   bool set_format(const char *const name);
 };
+#endif // common_h

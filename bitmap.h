@@ -15,6 +15,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef bitmap_h
+#define bitmap_h
+#include "rectangle.h"
+
 class Bitmap : public Rectangle {
   std::vector<std::vector<uint8_t>> data; // faster than bool
 
@@ -67,3 +71,4 @@ public:
   bool top_hook(int *hdiff) const;
   bool bottom_hook(int *hdiff) const;
 };
+#endif // bitmap_h

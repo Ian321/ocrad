@@ -15,6 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef track_h
+#define track_h
+
 class Vrhomboid // Rhomboid with two vertical sides.
 {
   int left_, lvcenter_, right_, rvcenter_, height_;
@@ -74,3 +77,4 @@ public:
   //  bool includes( const Rectangle & r ) const;
   //  bool includes( const int row, const int col ) const;
 };
+#endif // track_h

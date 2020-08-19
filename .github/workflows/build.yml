@@ -1,0 +1,49 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+      fail-fast: false
+    
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Build
+      - run: |
+          mkdir build
+          cd build
+          cmake ..
+          cmake --build . --config Release
+
+      - name: Upload artifacts (Windows)
+        if: startsWith(matrix.os, 'windows')
+        uses: actions/upload-artifact@v1
+        with:
+          name: ocrad-windows
+          path: |
+            build/Release/libocrad.dll
+            build/Release/ocrad.exe
+            build/Release/ocradcheck.exe
+
+      - name: Upload artifacts (Linux)
+        if: startsWith(matrix.os, 'ubuntu')
+        uses: actions/upload-artifact@v1
+        with:
+          name: ocrad-linux
+          path: |
+            build/libocrad.so
+            build/ocrad
+            build/ocradcheck
+
+      - name: Upload artifacts (MacOS)
+        if: startsWith(matrix.os, 'macos')
+        uses: actions/upload-artifact@v1
+        with:
+          name: ocrad-mac
+          path: |
+            build/**
