@@ -17,4 +17,6 @@ jobs:
       run: apt-get -y install clang-format
 
     - name: Check formatting
-      run: ./tools/check-format.sh
+      run: |
+        chmod +x ./tools/check-format.sh
+        ./tools/check-format.sh
