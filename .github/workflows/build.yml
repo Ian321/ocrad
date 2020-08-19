@@ -27,7 +27,9 @@ jobs:
         with:
           name: ocrad-windows
           path: |
-            build/
+            build/Release/ocrad.exe
+            build/Release/ocradcheck.exe
+            build/Release/libocrad.dll
 
       - name: Upload artifacts (Linux)
         if: startsWith(matrix.os, 'ubuntu')
@@ -35,7 +37,9 @@ jobs:
         with:
           name: ocrad-linux
           path: |
-            build/
+            build/ocrad
+            build/ocradcheck
+            build/libocrad.so
 
       - name: Upload artifacts (MacOS)
         if: startsWith(matrix.os, 'macos')
@@ -43,4 +47,6 @@ jobs:
         with:
           name: ocrad-mac
           path: |
-            build/
+            build/ocrad
+            build/ocradcheck
+            build/libocrad.dylib
