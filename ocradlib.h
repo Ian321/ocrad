@@ -15,11 +15,17 @@
     along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef _WIN32
+#define DllExport __declspec(dllexport)
+#else
+#define DllExport
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-const char *const OCRAD_version_string = "0.27";
+DllExport const char *const OCRAD_version_string = "0.27";
 
 /* OCRAD_Pixmap.data is a pointer to image data formed by "height" rows
    of "width" pixels each.
@@ -37,7 +43,7 @@ struct OCRAD_Pixmap {
   enum OCRAD_Pixmap_Mode mode;
 };
 
-enum OCRAD_Errno {
+DllExport enum OCRAD_Errno {
   OCRAD_ok = 0,
   OCRAD_bad_argument,
   OCRAD_mem_error,

@@ -58,9 +58,9 @@ bool verify_descriptor(OCRAD_Descriptor *const ocrdes,
   return true;
 }
 
-const char *OCRAD_version() { return OCRAD_version_string; }
+DllExport const char *OCRAD_version() { return OCRAD_version_string; }
 
-OCRAD_Descriptor *OCRAD_open() {
+DllExport OCRAD_Descriptor *OCRAD_open() {
   verbosity = -1; // keep library silent
   OCRAD_Descriptor *const ocrdes = new (std::nothrow) OCRAD_Descriptor;
   if (!ocrdes)
@@ -68,7 +68,7 @@ OCRAD_Descriptor *OCRAD_open() {
   return ocrdes;
 }
 
-int OCRAD_close(OCRAD_Descriptor *const ocrdes) {
+DllExport int OCRAD_close(OCRAD_Descriptor *const ocrdes) {
   if (!ocrdes)
     return -1;
   if (ocrdes->textpage)
@@ -79,13 +79,13 @@ int OCRAD_close(OCRAD_Descriptor *const ocrdes) {
   return 0;
 }
 
-OCRAD_Errno OCRAD_get_errno(OCRAD_Descriptor *const ocrdes) {
+DllExport OCRAD_Errno OCRAD_get_errno(OCRAD_Descriptor *const ocrdes) {
   if (!ocrdes)
     return OCRAD_bad_argument;
   return ocrdes->ocr_errno;
 }
 
-int OCRAD_set_image(OCRAD_Descriptor *const ocrdes,
+DllExport int OCRAD_set_image(OCRAD_Descriptor *const ocrdes,
                     const OCRAD_Pixmap *const image, const bool invert) {
   if (!ocrdes)
     return -1;
@@ -113,7 +113,7 @@ int OCRAD_set_image(OCRAD_Descriptor *const ocrdes,
   return 0;
 }
 
-int OCRAD_set_image_from_file(OCRAD_Descriptor *const ocrdes,
+DllExport int OCRAD_set_image_from_file(OCRAD_Descriptor *const ocrdes,
                               const char *const filename, const bool invert) {
   if (!ocrdes)
     return -1;
@@ -149,14 +149,14 @@ int OCRAD_set_image_from_file(OCRAD_Descriptor *const ocrdes,
   return retval;
 }
 
-int OCRAD_set_utf8_format(OCRAD_Descriptor *const ocrdes, const bool utf8) {
+DllExport int OCRAD_set_utf8_format(OCRAD_Descriptor *const ocrdes, const bool utf8) {
   if (!verify_descriptor(ocrdes))
     return -1;
   ocrdes->control.utf8 = utf8;
   return 0;
 }
 
-int OCRAD_set_threshold(OCRAD_Descriptor *const ocrdes, const int threshold) {
+DllExport int OCRAD_set_threshold(OCRAD_Descriptor *const ocrdes, const int threshold) {
   if (!verify_descriptor(ocrdes))
     return -1;
   if (threshold < -1 || threshold > 255) {
@@ -167,7 +167,7 @@ int OCRAD_set_threshold(OCRAD_Descriptor *const ocrdes, const int threshold) {
   return 0;
 }
 
-int OCRAD_scale(OCRAD_Descriptor *const ocrdes, const int value) {
+DllExport int OCRAD_scale(OCRAD_Descriptor *const ocrdes, const int value) {
   if (!verify_descriptor(ocrdes))
     return -1;
   int retval = 0;
@@ -182,7 +182,7 @@ int OCRAD_scale(OCRAD_Descriptor *const ocrdes, const int value) {
   return retval;
 }
 
-int OCRAD_recognize(OCRAD_Descriptor *const ocrdes, const bool layout) {
+DllExport int OCRAD_recognize(OCRAD_Descriptor *const ocrdes, const bool layout) {
   if (!verify_descriptor(ocrdes))
     return -1;
   Textpage *const textpage = new (std::nothrow)
@@ -197,13 +197,13 @@ int OCRAD_recognize(OCRAD_Descriptor *const ocrdes, const bool layout) {
   return 0;
 }
 
-int OCRAD_result_blocks(OCRAD_Descriptor *const ocrdes) {
+DllExport int OCRAD_result_blocks(OCRAD_Descriptor *const ocrdes) {
   if (!verify_descriptor(ocrdes, true))
     return -1;
   return ocrdes->textpage->textblocks();
 }
 
-int OCRAD_result_lines(OCRAD_Descriptor *const ocrdes, const int blocknum) {
+DllExport int OCRAD_result_lines(OCRAD_Descriptor *const ocrdes, const int blocknum) {
   if (!verify_descriptor(ocrdes, true))
     return -1;
   if (blocknum < 0 || blocknum >= ocrdes->textpage->textblocks()) {
@@ -213,7 +213,7 @@ int OCRAD_result_lines(OCRAD_Descriptor *const ocrdes, const int blocknum) {
   return ocrdes->textpage->textblock(blocknum).textlines();
 }
 
-int OCRAD_result_chars_total(OCRAD_Descriptor *const ocrdes) {
+DllExport int OCRAD_result_chars_total(OCRAD_Descriptor *const ocrdes) {
   if (!verify_descriptor(ocrdes, true))
     return -1;
   int c = 0;
@@ -223,7 +223,7 @@ int OCRAD_result_chars_total(OCRAD_Descriptor *const ocrdes) {
   return c;
 }
 
-int OCRAD_result_chars_block(OCRAD_Descriptor *const ocrdes,
+DllExport int OCRAD_result_chars_block(OCRAD_Descriptor *const ocrdes,
                              const int blocknum) {
   if (!verify_descriptor(ocrdes, true))
     return -1;
@@ -237,7 +237,7 @@ int OCRAD_result_chars_block(OCRAD_Descriptor *const ocrdes,
   return c;
 }
 
-int OCRAD_result_chars_line(OCRAD_Descriptor *const ocrdes, const int blocknum,
+DllExport int OCRAD_result_chars_line(OCRAD_Descriptor *const ocrdes, const int blocknum,
                             const int linenum) {
   if (!verify_descriptor(ocrdes, true))
     return -1;
@@ -250,7 +250,7 @@ int OCRAD_result_chars_line(OCRAD_Descriptor *const ocrdes, const int blocknum,
   return ocrdes->textpage->textblock(blocknum).textline(linenum).characters();
 }
 
-const char *OCRAD_result_line(OCRAD_Descriptor *const ocrdes,
+DllExport const char *OCRAD_result_line(OCRAD_Descriptor *const ocrdes,
                               const int blocknum, const int linenum) {
   if (!verify_descriptor(ocrdes, true))
     return 0;
@@ -273,7 +273,7 @@ const char *OCRAD_result_line(OCRAD_Descriptor *const ocrdes,
   return ocrdes->text.c_str();
 }
 
-int OCRAD_result_first_character(OCRAD_Descriptor *const ocrdes) {
+DllExport int OCRAD_result_first_character(OCRAD_Descriptor *const ocrdes) {
   if (!verify_descriptor(ocrdes, true))
     return -1;
   int ch = 0;
