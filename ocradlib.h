@@ -50,11 +50,7 @@ DllExport extern const char *const OCRAD_version_string;
    OCRAD_greymap  --> 1 byte  per pixel;  256 level greymap (0 = black)
    OCRAD_colormap --> 3 bytes per pixel;  16777216 colors RGB (0,0,0 = black) */
 
-enum OCRAD_Pixmap_Mode {
-  OCRAD_bitmap,
-  OCRAD_greymap,
-  OCRAD_colormap
-};
+enum OCRAD_Pixmap_Mode { OCRAD_bitmap, OCRAD_greymap, OCRAD_colormap };
 
 struct OCRAD_Pixmap {
   const unsigned char *data;

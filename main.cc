@@ -420,7 +420,8 @@ int main(const int argc, const char *const argv[]) {
       fopen_s(&(control.outfile), outfile_name, "wx");
       if (control.outfile == 0) {
         if (verbosity >= 0) {
-          std::fprintf(stderr, "Output file %s already exists.\n", outfile_name);
+          std::fprintf(stderr, "Output file %s already exists.\n",
+                       outfile_name);
         }
         return 1;
       }
