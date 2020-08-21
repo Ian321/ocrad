@@ -18,6 +18,15 @@
 #ifndef common_h
 #define common_h
 
+#define PROGVERSION "0.27"
+
+#ifdef _WIN32
+#define DllExport __declspec(dllexport)
+#else
+#define DllExport
+#define fopen_s(pFile, filename, mode) (*pFile) = std::fopen(filename, mode)
+#endif
+
 extern int verbosity;
 
 namespace Ocrad {

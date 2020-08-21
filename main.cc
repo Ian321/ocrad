@@ -413,13 +413,17 @@ int main(const int argc, const char *const argv[]) {
 
   if (outfile_name && std::strcmp(outfile_name, "-") != 0) {
     if (append)
-      control.outfile = std::fopen(outfile_name, "a");
+      fopen_s(&(control.outfile), outfile_name, "a");
     else if (force)
-      control.outfile = std::fopen(outfile_name, "w");
-    else if ((control.outfile = std::fopen(outfile_name, "wx")) == 0) {
-      if (verbosity >= 0)
-        std::fprintf(stderr, "Output file %s already exists.\n", outfile_name);
-      return 1;
+      fopen_s(&(control.outfile), outfile_name, "w");
+    else {
+      fopen_s(&(control.outfile), outfile_name, "wx");
+      if (control.outfile == 0) {
+        if (verbosity >= 0) {
+          std::fprintf(stderr, "Output file %s already exists.\n", outfile_name);
+        }
+        return 1;
+      }
     }
     if (!control.outfile) {
       if (verbosity >= 0)
@@ -434,7 +438,7 @@ int main(const int argc, const char *const argv[]) {
       if (!outfile_name)
         control.outfile = 0;
     } else {
-      control.exportfile = std::fopen(exportfile_name, "w");
+      fopen_s(&(control.exportfile), exportfile_name, "w");
       if (!control.exportfile) {
         if (verbosity >= 0)
           std::fprintf(stderr, "Can't open '%s'\n", exportfile_name);
@@ -459,7 +463,7 @@ int main(const int argc, const char *const argv[]) {
         stdin_used = true;
       infile = stdin;
     } else {
-      infile = std::fopen(infile_name, "rb");
+      fopen_s(&(infile), infile_name, "rb");
       if (!infile) {
         if (verbosity >= 0)
           std::fprintf(stderr, "Can't open '%s'\n", infile_name);

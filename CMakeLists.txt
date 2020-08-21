@@ -4,7 +4,6 @@ project(libocrad)
 project(ocradcheck)
 
 set(CMAKE_CXX_STANDARD 11)
-add_definitions(-DPROGVERSION="0.27")
 
 add_library(SRC_ALL
   ./arg_parser.cc

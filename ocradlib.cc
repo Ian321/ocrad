@@ -95,7 +95,7 @@ DllExport int OCRAD_set_image_from_file(OCRAD_Descriptor *const ocrdes,
     if (std::strcmp(filename, "-") == 0)
       infile = stdin;
     else
-      infile = std::fopen(filename, "rb");
+      fopen_s(&infile, filename, "rb");
   }
   if (!infile) {
     ocrdes->ocr_errno = OCRAD_bad_argument;

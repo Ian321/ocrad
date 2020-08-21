@@ -37,12 +37,6 @@
 #include "track.h"
 #include "ucs.h"
 
-#ifdef _WIN32
-#define DllExport __declspec(dllexport)
-#else
-#define DllExport
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -56,20 +50,20 @@ DllExport extern const char *const OCRAD_version_string;
    OCRAD_greymap  --> 1 byte  per pixel;  256 level greymap (0 = black)
    OCRAD_colormap --> 3 bytes per pixel;  16777216 colors RGB (0,0,0 = black) */
 
-DllExport enum OCRAD_Pixmap_Mode {
+enum OCRAD_Pixmap_Mode {
   OCRAD_bitmap,
   OCRAD_greymap,
   OCRAD_colormap
 };
 
-DllExport struct OCRAD_Pixmap {
+struct OCRAD_Pixmap {
   const unsigned char *data;
   int height;
   int width;
   enum OCRAD_Pixmap_Mode mode;
 };
 
-DllExport enum OCRAD_Errno {
+enum OCRAD_Errno {
   OCRAD_ok = 0,
   OCRAD_bad_argument,
   OCRAD_mem_error,
@@ -77,7 +71,7 @@ DllExport enum OCRAD_Errno {
   OCRAD_library_error
 };
 
-DllExport struct OCRAD_Descriptor {
+struct OCRAD_Descriptor {
   Page_image *page_image;
   Textpage *textpage;
   OCRAD_Errno ocr_errno;

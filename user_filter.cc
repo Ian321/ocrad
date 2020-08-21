@@ -201,7 +201,8 @@ void User_filter::set_file_error(const char *const file_name,
 
 User_filter::User_filter(const char *const file_name)
     : table1(256, -1), retval_(0), default_(d_discard) {
-  FILE *const f = std::fopen(file_name, "r");
+  FILE *f = 0;
+  fopen_s(&f, file_name, "r");
   if (!f) {
     error_ = "Can't open file '";
     error_ += file_name;
