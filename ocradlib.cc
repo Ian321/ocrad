@@ -35,7 +35,7 @@
 #include "track.h"
 #include "ucs.h"
 
-struct OCRAD_Descriptor {
+DllExport struct OCRAD_Descriptor {
   Page_image *page_image;
   Textpage *textpage;
   OCRAD_Errno ocr_errno;
