@@ -15,37 +15,7 @@
     along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <climits>
-#include <cstdio>
-#include <cstring>
-#include <stdint.h>
-#include <string>
-#include <vector>
-
-#include "bitmap.h"
-#include "blob.h"
-#include "character.h"
-#include "common.h"
 #include "ocradlib.h"
-#include "page_image.h"
-#include "rectangle.h"
-#include "textblock.h"
-#include "textline.h"
-#include "textpage.h"
-#include "track.h"
-#include "ucs.h"
-
-DllExport struct OCRAD_Descriptor {
-  Page_image *page_image;
-  Textpage *textpage;
-  OCRAD_Errno ocr_errno;
-  Control control;
-  std::string text;
-
-  OCRAD_Descriptor() : page_image(0), textpage(0), ocr_errno(OCRAD_ok) {
-    control.outfile = 0;
-  }
-};
 
 bool verify_descriptor(OCRAD_Descriptor *const ocrdes,
                        const bool result = false) {
@@ -58,6 +28,7 @@ bool verify_descriptor(OCRAD_Descriptor *const ocrdes,
   return true;
 }
 
+DllExport const char *const OCRAD_version_string = "0.27";
 DllExport const char *OCRAD_version() { return OCRAD_version_string; }
 
 DllExport OCRAD_Descriptor *OCRAD_open() {

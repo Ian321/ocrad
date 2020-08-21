@@ -18,6 +18,25 @@
 #ifndef ocradlib_h
 #define ocradlib_h
 
+#include <climits>
+#include <cstdio>
+#include <cstring>
+#include <stdint.h>
+#include <string>
+#include <vector>
+
+#include "bitmap.h"
+#include "blob.h"
+#include "character.h"
+#include "common.h"
+#include "page_image.h"
+#include "rectangle.h"
+#include "textblock.h"
+#include "textline.h"
+#include "textpage.h"
+#include "track.h"
+#include "ucs.h"
+
 #ifdef _WIN32
 #define DllExport __declspec(dllexport)
 #else
@@ -28,7 +47,7 @@
 extern "C" {
 #endif
 
-DllExport const char *const OCRAD_version_string = "0.27";
+DllExport extern const char *const OCRAD_version_string;
 
 /* OCRAD_Pixmap.data is a pointer to image data formed by "height" rows
    of "width" pixels each.
@@ -58,7 +77,17 @@ DllExport enum OCRAD_Errno {
   OCRAD_library_error
 };
 
-DllExport struct OCRAD_Descriptor;
+DllExport struct OCRAD_Descriptor {
+  Page_image *page_image;
+  Textpage *textpage;
+  OCRAD_Errno ocr_errno;
+  Control control;
+  std::string text;
+
+  OCRAD_Descriptor() : page_image(0), textpage(0), ocr_errno(OCRAD_ok) {
+    control.outfile = 0;
+  }
+};
 
 DllExport const char *OCRAD_version(void);
 

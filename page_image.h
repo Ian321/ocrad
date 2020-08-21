@@ -15,6 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef page_image_h
+#define page_image_h
+
 #include "rectangle.h"
 
 struct OCRAD_Pixmap;
@@ -88,3 +91,4 @@ public:
   bool change_scale(int n);
   void transform(const Transformation &t);
 };
+#endif // page_image_h
