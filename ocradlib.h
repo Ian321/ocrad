@@ -15,6 +15,9 @@
     along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef ocradlib_h
+#define ocradlib_h
+
 #ifdef _WIN32
 #define DllExport __declspec(dllexport)
 #else
@@ -112,3 +115,4 @@ OCRAD_result_first_character(struct OCRAD_Descriptor *const ocrdes);
 #ifdef __cplusplus
 }
 #endif
+#endif // ocradlib_h
