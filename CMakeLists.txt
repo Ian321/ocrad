@@ -36,7 +36,7 @@ add_library(SRC_ALL
 set_property(TARGET SRC_ALL PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 add_library(libocrad SHARED ./ocradlib.cc)
-set_target_properties(libocrad PROPERTIES PREFIX "")
+set_target_properties(libocrad PROPERTIES OUTPUT_NAME "ocrad")
 target_link_libraries(libocrad SRC_ALL)
 
 add_executable(ocrad ./main.cc)

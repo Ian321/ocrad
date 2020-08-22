@@ -29,7 +29,7 @@ jobs:
           path: |
             build/Release/ocrad.exe
             build/Release/ocradcheck.exe
-            build/Release/libocrad.dll
+            build/Release/ocrad.dll
 
       - name: Upload artifacts (Linux)
         if: startsWith(matrix.os, 'ubuntu')
