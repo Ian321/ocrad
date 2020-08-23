@@ -2,6 +2,17 @@ cmake_minimum_required(VERSION 3.0)
 project(ocrad)
 project(libocrad)
 project(ocradcheck)
+project(ocrad-java)
+
+# Java
+include_directories($ENV{JAVA_HOME}/include)
+if(WIN32)
+  include_directories($ENV{JAVA_HOME}/include/win32)
+elseif(APPLE)
+  include_directories($ENV{JAVA_HOME}/include/darwin)
+else()
+  include_directories($ENV{JAVA_HOME}/include/linux)
+endif()
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -44,6 +55,9 @@ target_link_libraries(ocrad SRC_ALL)
 
 add_executable(ocradcheck ./ocradcheck.cc ./ocradlib.cc)
 target_link_libraries(ocradcheck SRC_ALL)
+
+add_library(ocrad-java SHARED ./java/com_ian678_ocrad_Ocrad.cc ./ocradlib.cc)
+target_link_libraries(ocrad-java SRC_ALL)
 
 if(MSVC)
   add_compile_options(/W4 /WX)
