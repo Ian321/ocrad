@@ -22,7 +22,7 @@ JNIEXPORT jint JNICALL Java_com_ian678_ocrad_Ocrad_OCRAD_1set_1image(JNIEnv *, j
 }
 
 JNIEXPORT jint JNICALL Java_com_ian678_ocrad_Ocrad_OCRAD_1set_1image_1from_1file(JNIEnv *env, jobject, jlong ocrdes, jstring filename, jboolean invert) {
-  return (jint)OCRAD_set_image_from_file((OCRAD_Descriptor *) ocrdes, env->GetStringUTFChars(filename, false), invert);
+  return (jint)OCRAD_set_image_from_file((OCRAD_Descriptor *) ocrdes, env->GetStringUTFChars(filename, NULL), invert);
 }
 
 JNIEXPORT jint JNICALL Java_com_ian678_ocrad_Ocrad_OCRAD_1set_1utf8_1format(JNIEnv *env, jobject, jlong ocrdes, jboolean utf8) {
