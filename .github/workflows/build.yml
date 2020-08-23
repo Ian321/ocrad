@@ -21,18 +21,35 @@ jobs:
           cmake ..
           cmake --build . --config Release
 
-      - name: Upload artifacts
+      - name: Upload artifacts (Windows)
+        if: startsWith(matrix.os, 'windows')
         uses: actions/upload-artifact@v2
         with:
-          name: ocrad
+          name: ocrad-windows
           path: |
             build/Release/ocrad.exe
             build/Release/ocradcheck.exe
             build/Release/ocrad.dll
             build/Release/ocrad-java.dll
+
+      - name: Upload artifacts (Linux)
+        if: startsWith(matrix.os, 'ubuntu')
+        uses: actions/upload-artifact@v2
+        with:
+          name: ocrad-linux
+          path: |
+            build/ocrad
+            build/ocradcheck
+            build/libocrad.so
+            build/libocrad-java.so
+
+      - name: Upload artifacts (MacOS)
+        if: startsWith(matrix.os, 'macos')
+        uses: actions/upload-artifact@v2
+        with:
+          name: ocrad-mac
+          path: |
             build/ocrad
             build/ocradcheck
             build/libocrad.dylib
-            build/libocrad.so
             build/libocrad-java.dylib
-            build/libocrad-java.so
