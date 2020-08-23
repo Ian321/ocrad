@@ -30,6 +30,7 @@ jobs:
             build/Release/ocrad.exe
             build/Release/ocradcheck.exe
             build/Release/ocrad.dll
+            build/Release/ocrad-java.dll
 
       - name: Upload artifacts (Linux)
         if: startsWith(matrix.os, 'ubuntu')
@@ -40,6 +41,7 @@ jobs:
             build/ocrad
             build/ocradcheck
             build/libocrad.so
+            build/Release/libocrad-java.so
 
       - name: Upload artifacts (MacOS)
         if: startsWith(matrix.os, 'macos')
@@ -50,3 +52,4 @@ jobs:
             build/ocrad
             build/ocradcheck
             build/libocrad.dylib
+            build/Release/libocrad-java.dylib
